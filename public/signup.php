@@ -22,19 +22,11 @@
   <body class="form-v10">
     <div class="page-content">
       <div class="form-v10-content">
-        <form class="form-detail" action="#" method="post" id="myform">
+        <form class="form-detail" action="../server/handleSignup.php" method="post" id="myform">
           <div class="form-left">
             <h2>General Infomation</h2>
             <div class="form-row">
-              <select name="title">
-                <option class="option" value="title">Title</option>
-                <option class="option" value="businessman">Businessman</option>
-                <option class="option" value="reporter">Reporter</option>
-                <option class="option" value="secretary">Secretary</option>
-              </select>
-              <span class="select-btn">
-                <i class="zmdi zmdi-chevron-down"></i>
-              </span>
+              
             </div>
             <div class="form-group">
               <div class="form-row form-row-1">
@@ -58,50 +50,29 @@
                 />
               </div>
             </div>
-            <div class="form-row">
-              <select name="position">
-                <option value="position">Position</option>
-                <option value="director">Director</option>
-                <option value="manager">Manager</option>
-                <option value="employee">Employee</option>
-              </select>
-              <span class="select-btn">
-                <i class="zmdi zmdi-chevron-down"></i>
-              </span>
-            </div>
-            <div class="form-row">
-              <input
-                type="text"
-                name="company"
-                class="company"
-                id="company"
-                placeholder="Company"
-                required
-              />
-            </div>
             <div class="form-group">
-              <div class="form-row form-row-3">
+              <div class="form-row form-row-1">
                 <input
-                  type="text"
-                  name="business"
-                  class="business"
-                  id="business"
-                  placeholder="Business Arena"
+                  type="password"
+                  name="password"
+                  id="password"
+                  class="input-text"
+                  placeholder="enter password"
                   required
                 />
               </div>
-              <div class="form-row form-row-4">
-                <select name="employees">
-                  <option value="employees">Employees</option>
-                  <option value="trainee">Trainee</option>
-                  <option value="colleague">Colleague</option>
-                  <option value="associate">Associate</option>
-                </select>
-                <span class="select-btn">
-                  <i class="zmdi zmdi-chevron-down"></i>
-                </span>
+              <div class="form-row form-row-2">
+                <input
+                  type="password"
+                  name="rePassword"
+                  id="rePassword"
+                  class="input-text"
+                  placeholder="re-enter password"
+                  required
+                />
               </div>
             </div>
+          
           </div>
           <div class="form-right">
             <h2>Contact Details</h2>
