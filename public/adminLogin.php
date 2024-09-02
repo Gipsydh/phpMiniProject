@@ -22,9 +22,9 @@
   <body class="form-v10">
     <div class="page-content">
       <div class="form-v10-content">
-        <form class="form-detail" action="#" method="post" id="myform">
+        <form class="form-detail" action="../server/handleAdminLogin.php" method="post" id="myform">
           <div class="form-left">
-            <h2>General Infomation</h2>
+            <h2>Admin Login</h2>
             
            
           </div>
@@ -32,10 +32,10 @@
             <h2>LogIn</h2>
             <div class="form-row">
               <input
-                type="text"
-                name="street"
-                class="street"
-                id="street"
+                type="email"
+                name="email"
+                class="email"
+                id="email"
                 placeholder="enter your email"
                 required
               />
@@ -43,9 +43,9 @@
             <div class="form-row">
               <input
                 type="password"
-                name="additional"
-                class="additional"
-                id="additional"
+                name="password"
+                class="password"
+                id="password"
                 placeholder="enter your password"
                 required
               />
@@ -56,7 +56,7 @@
                 type="submit"
                 name="register"
                 class="register"
-                value="Register Badge"
+                value="Log in"
               />
             </div>
           </div>
