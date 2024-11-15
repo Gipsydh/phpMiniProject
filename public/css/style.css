@@ -115,20 +115,36 @@ section {
   text-align: center;
   margin: 50px 0;
 }
-.specialist .info .left,
+.specialist .info .left {
+  width: 40%;
+}
+.specialist .info .left img {
+  width: 100%;
+  border-radius: 20px;
+}
 .specialist .info .right {
-  width: 50%;
+  width: 60%;
   height: 850px;
 }
 .specialist .info .right .categories {
   display: flex;
   flex-wrap: wrap;
+  justify-content: left;
+  align-items: center;
+  padding-left: 25px;
 }
 .specialist .info .right .categories .category {
-  width: calc(100% / 6);
-  padding: 20px;
-  margin: 10px;
+  cursor: pointer;
+  flex-direction: column;
+  display: flex;
+  width: calc(100% / 5);
+  height: 150px;
+  /* padding: 20; */
+  margin: 0px 20px 20px 0px;
   border: 1px solid #949292;
-  border-radius: 10px;
-  box-shadow: 0 0 6px 2px #002f4c5c;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 12px 12px 31px #c7c7c7, -12px -12px 31px #f2f2f2;
+  justify-content: center;
+  align-items: center;
 }

@@ -1,10 +1,12 @@
 <?php
 // Start the session
-session_start();
-
-// Check if the user clicked the "Sign Out" button
-
-?>
+include '../server/dbConnect.php'; // Ensure this path is correct
+try {
+ // Fetch specializations from the database
+    $stmt = $pdo->prepare("SELECT * FROM Specializations"); $stmt->execute();
+$specializations = $stmt->fetchAll(PDO::FETCH_ASSOC); } catch (PDOException $e)
+{ echo "Connection failed: " . $e->getMessage(); } include
+'./components/header.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -23,74 +25,6 @@ session_start();
   </head>
   <body>
     <div class="container">
-      <nav class="navbar">
-        <div class="upper">
-          <div class="logo">logo</div>
-          <form class="searchBar">
-            <input type="text" />
-            <div class="searchButton pointer">
-              <i class="fa-solid fa-magnifying-glass"></i>
-            </div>
-          </form>
-          <div class="userGetIn">
-            <?php if (isset($_SESSION['email'])): ?>
-            <div class="sideButtons">
-              <div class="button">
-                <div class="btn pointer">
-                  <i class="fa-solid fa-user"></i>
-                  <span
-                    ><?php echo htmlspecialchars($_SESSION['first_name'] . ' ' . $_SESSION['last_name']); ?></span
-                  >
-                </div>
-              </div>
-            </div>
-            <div class="sideButtons">
-              <div class="button">
-                <div class="btn pointer" onclick="handleLogout()">
-                  <i class="fa-solid fa-right-from-bracket"></i>
-                  <span>Sign out</span>
-                </div>
-              </div>
-            </div>
-            <?php else: ?>
-              <div class="sideButtons">
-                <div class="button">
-                  <div class="btn pointer" onclick="handleAdminLogin()">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>Admin Login</span>
-                  </div>
-                </div>
-              </div>
-            <div class="sideButtons">
-              <div class="button">
-                <div class="btn pointer" onclick="redirectToSignup()">
-                  <i class="fa-solid fa-user"></i>
-                  <span>Signup</span>
-                </div>
-              </div>
-            </div>
-            <div class="sideButtons">
-              <div class="button">
-                <div class="btn pointer" onclick="redirectToLogin()">
-                  <i class="fa-solid fa-right-to-bracket"></i>
-                  <span>Login</span>
-                </div>
-              </div>
-            </div>
-            <?php endif; ?>
-          </div>
-        </div>
-        <div class="lower">
-          <div class="navOption">
-            <span>Category</span>
-            <i class="fa-solid fa-caret-down"></i>
-          </div>
-          <div class="navOption">
-            <span>Appointment a doctor</span>
-            <i class="fa-solid fa-caret-down"></i>
-          </div>
-        </div>
-      </nav>
       <section class="banner">
         <div class="data">
           <h1>The apollo world of care</h1>
@@ -111,64 +45,29 @@ session_start();
         </div>
         <div class="info">
           <div class="left">
-            <img src="" alt="" />
+            <img
+              src="https://cdn.apollohospitals.com/apollohospitals/apollo-prohealth/ah/explore.jpg"
+              alt=""
+            />
           </div>
           <div class="right">
             <div class="categories">
-              <div class="category">
-                <div class="logo">
-                  <span>IMG</span>
+              <?php foreach ($specializations as $specialization): ?>
+              <div class="category" onclick="redirectToCategory('<?php echo htmlspecialchars($specialization['SpecializationID']); ?>')">
+                <div
+                  class="logo"
+                  
+                >
+                  <img
+                    src="<?php echo htmlspecialchars($specialization['imgLink']); ?>"
+                    alt="<?php echo htmlspecialchars($specialization['SpecializationName']); ?>"
+                  />
                 </div>
-                <span>text</span>
+                <span style="margin-top: 10px">
+                  <?php echo htmlspecialchars($specialization['SpecializationName']); ?>
+                </span>
               </div>
-              <div class="category">
-                <div class="logo">
-                  <span>IMG</span>
-                </div>
-                <span>text</span>
-              </div>
-              <div class="category">
-                <div class="logo">
-                  <span>IMG</span>
-                </div>
-                <span>text</span>
-              </div>
-              <div class="category">
-                <div class="logo">
-                  <span>IMG</span>
-                </div>
-                <span>text</span>
-              </div>
-              <div class="category">
-                <div class="logo">
-                  <span>IMG</span>
-                </div>
-                <span>text</span>
-              </div>
-              <div class="category">
-                <div class="logo">
-                  <span>IMG</span>
-                </div>
-                <span>text</span>
-              </div>
-              <div class="category">
-                <div class="logo">
-                  <span>IMG</span>
-                </div>
-                <span>text</span>
-              </div>
-              <div class="category">
-                <div class="logo">
-                  <span>IMG</span>
-                </div>
-                <span>text</span>
-              </div>
-              <div class="category">
-                <div class="logo">
-                  <span>IMG</span>
-                </div>
-                <span>text</span>
-              </div>
+              <?php endforeach; ?>
             </div>
           </div>
         </div>
@@ -181,11 +80,16 @@ session_start();
       function redirectToSignup() {
         window.location.href = 'signup.php' // Redirect to signup page
       }
-      function handleAdminLogin(){
+      function handleAdminLogin() {
         window.location.href = 'adminLogin.php' // Redirect to signup page
       }
       function redirectToLogin() {
         window.location.href = 'signin.php' // Redirect to login page
+      }
+      function redirectToCategory(category) {
+        // Redirect to the booking appointment page with the category as a URL parameter
+        window.location.href =
+          '/miniproject/public/bookAppointment.php?category=' + encodeURIComponent(category)
       }
     </script>
     <script>
