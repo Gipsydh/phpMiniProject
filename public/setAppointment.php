@@ -1,5 +1,6 @@
 <?php
 // Start the session
+
 include '../server/dbConnect.php'; // Ensure this path is correct
 include './components/header.php';
 
@@ -83,25 +84,35 @@ $startDate = (new DateTime())->format('Y-m-d H:i:s'); // Current date and time
 $endDate = (new DateTime("+5 days"))->format('Y-m-d 23:59:59'); // 5 days from now
 
 // Prepare the SQL query to get booked appointments for a specific doctor
-$query = "SELECT AppointmentTime FROM appointments WHERE DoctorID=:doctorID AND AppointmentTime >= :startDate AND AppointmentTime <= :endDate";
+$query = "SELECT AppointmentTime,AppointmentDate FROM appointments WHERE DoctorID=:doctorID";
 $stmt = $pdo->prepare($query);
 
 // Bind parameters
 $stmt->bindParam(':doctorID', $doctorID, PDO::PARAM_INT);
-$stmt->bindParam(':startDate', $startDate);
-$stmt->bindParam(':endDate', $endDate);
+// $stmt->bindParam(':startDate', $startDate);
+// $stmt->bindParam(':endDate', $endDate);
 
 // Execute the statement
 $stmt->execute();
 
 // Fetch the results (booked appointments)
-$appointments = $stmt->fetchAll(PDO::FETCH_COLUMN);
+$appointments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Convert booked appointments to DateTime objects
-$bookedTimes = array_map(fn($time) => new DateTime($time), $appointments);
-
+// print_r($appointments);
+$bookedTimes = array_map(
+    fn($appointment) => new DateTime($appointment['AppointmentDate'] . ' ' . $appointment['AppointmentTime']),
+    $appointments
+);// print_r($bookedTimes);
 // Generate slots for the next 5 days
 for ($day = 0; $day < $maxDays; $day++) {
+    $currentDate = (new DateTime())->modify("+$day day");
+    $currentDateString = $currentDate->format('Y-m-d');
+    $slots = [];
+
+    // Start from 9 AM each day
+    $startTime = new DateTime($currentDateString . ' 09:00');
+   for ($day = 0; $day < $maxDays; $day++) {
     $currentDate = (new DateTime())->modify("+$day day");
     $currentDateString = $currentDate->format('Y-m-d');
     $slots = [];
@@ -116,7 +127,8 @@ for ($day = 0; $day < $maxDays; $day++) {
             // Check if this slot is already booked
             $isBooked = false;
             foreach ($bookedTimes as $bookedTime) {
-                if ($bookedTime >= $startTime && $bookedTime < $endTime) {
+                // Compare both date and time
+                if ($bookedTime->format('Y-m-d H:i') === $startTime->format('Y-m-d H:i')) {
                     $isBooked = true;
                     break;
                 }
@@ -137,13 +149,19 @@ for ($day = 0; $day < $maxDays; $day++) {
         $appointmentSlots[$currentDateString] = $slots;
     }
 }
+}
 
 // Display the available appointment slots
 echo "<h2 style='margin:0px 0px 20px 0px;'>Available Appointment Slots</h2>";
 foreach ($appointmentSlots as $date => $slots) {
     echo "<h3 style='margin:30px 0px 10px;'>" . date('l, F j', strtotime($date)) . "</h3>";
     foreach ($slots as $slot) {
-        echo "<span style='cursor:pointer;color:#4a4a4a;font-weight:bold;display:inline-block;margin-right:10px;background-color:#e2e2e2; border-radius:5px; padding:10px;'>".$slot."</span>";
+        echo "<span class='appointment-slot' 
+         style='cursor:pointer;color:#4a4a4a;font-weight:bold;display:inline-block;margin-right:10px;background-color:#e2e2e2; border-radius:5px; padding:10px;' 
+         onclick='reserveAppointment( \"$date\",\"$slot\")'>
+         $slot
+      </span>";
+
     }
 }
 ?>
@@ -159,5 +177,52 @@ foreach ($appointmentSlots as $date => $slots) {
       include './components/footer.php'
     ?>
 </body>
+
+<script>
+            var userEmail = "<?php echo isset($_SESSION['email']) ? $_SESSION['email'] : ''; ?>";
+            var fullname = "<?php echo isset($_SESSION['first_name']) ? $_SESSION['first_name'] . ' ' . $_SESSION['last_name'] : ''; ?>";
+
+
+function reserveAppointment(currDate,currSlot){
+    if (userEmail==="")
+    window.location.href = 'signin.php' // Redirect to login page
+    else {
+        const params = new URLSearchParams(window.location.search);
+
+        const doctorID = params.get('doctorID');
+        const data = {
+            doctorId:doctorID,
+            patient_name: fullname,
+            userEmail: userEmail,
+            AppointmentDate:currDate,
+            AppointmentTime:currSlot
+
+        };
+        console.log(data)
+        fetch('../server/handleBookSlot.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify(data) // Include credentials such as cookies in the request
+        }).then(response => response.json())
+            .then(result => {
+                // Handle the response from the server
+                if (result.success) {
+                    alert("Appointment booked successfully!");
+                    location.reload();
+                } else {
+                    alert("Failed to book the appointment: " + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("An error occurred while booking the appointment.");
+            });
+    }
+}
+
+</script>
 
 </html>
