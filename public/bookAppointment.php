@@ -32,20 +32,7 @@ if (is_numeric($category)) {
         $doctors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-         if ($doctors) {
-            echo "<h2>Doctors specializing in " . htmlspecialchars($category) . ":</h2>";
-            echo "<ul>";
-            foreach ($doctors as $doctor) {
-                echo "<li>";
-                echo "Name: " . htmlspecialchars($doctor['FirstName']) . "<br>";
-                echo "Email: " . htmlspecialchars($doctor['Email']) . "<br>";
-                
-                echo "</li>";
-            }
-            echo "</ul>";
-        } else {
-            echo "No doctors found for this specialization.";
-        }
+         
         
 
     } catch (PDOException $e) {
@@ -71,10 +58,44 @@ include './components/header.php';
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+    <link rel="stylesheet" href="./css/bookAppointment.css" />
     <link rel="stylesheet" href="./css/style.css" />
+        <script src="./js/header.js" defer></script>
+
     <title>Document</title>
   </head>
   <body>
-   
+  <div class="container">
+    <h2 style='margin-bottom:20px'><?php echo htmlspecialchars($specialization['SpecializationName']); ?></h2>
+    <section style='margin-bottom:30px'>
+         <?php if (!empty($doctors)): ?>
+    <?php foreach ($doctors as $doctor): ?>
+        <div class="card" >
+            <h2 class="title"><?php echo "Dr. " . htmlspecialchars($doctor['FirstName']) . " " . htmlspecialchars($doctor['LastName']); ?>
+</h2>
+            <p class="description">
+                <?php echo "Address: " . htmlspecialchars($doctor['Address']);  ?>
+
+            </p>
+            <div class="actions">
+                <button class="accept" onclick="redirectToAppointment('<?php echo htmlspecialchars($doctor['DoctorID']); ?>')">Book an Appointment</button>
+            </div>
+        </div>
+    <?php endforeach; ?>
+<?php else: ?>
+    <p>No doctors found for this specialization.</p>
+<?php endif; ?>
+
+    </section>
+  </div>
+   <?php 
+      include './components/footer.php'
+    ?>
   </body>
+  <script>
+    function redirectToAppointment(category) {
+        window.location.href =
+          '/miniproject/public/setAppointment.php?doctorID=' + encodeURIComponent(category)
+      }
+  </script>
  </html>

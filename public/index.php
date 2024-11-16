@@ -73,9 +73,9 @@ $specializations = $stmt->fetchAll(PDO::FETCH_ASSOC); } catch (PDOException $e)
         </div>
       </section>
     </div>
-    <footer>
-      <span>FOOTER</span>
-    </footer>
+    <?php 
+      include './components/footer.php'
+    ?>
     <script>
       function redirectToSignup() {
         window.location.href = 'signup.php' // Redirect to signup page
