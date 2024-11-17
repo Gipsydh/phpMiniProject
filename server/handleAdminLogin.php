@@ -30,12 +30,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Verify the password
         echo $password;
+     
         if ($user && password_verify($password, $user['password'])) {
             // Password is correct, set session variables
-            $_SESSION['email'] = $user['email'];
+            $_SESSION['admin_email'] = $user['email'];
             
             // Redirect to a different page (e.g., admin dashboard)
-            header("Location: ../public/admin/dashboard.php");
+            header("Location: ../public/dashboard.php");
             exit(); // Ensure no further code is executed
         } else {
             // Invalid email or password

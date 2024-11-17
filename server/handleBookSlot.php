@@ -1,11 +1,15 @@
 <?php
 header('Content-Type: application/json');
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
-include 'dbConnect.php'; // Ensure this path is correct
+include 'dbConnect.php';
 
 $response = ['success' => false, 'message' => ''];
 
 try {
+    $input = json_decode(file_get_contents('php://input'), true);
+
     // Check if user is logged in
     if (!isset($_SESSION['email'])) {
         $response['message'] = 'User not logged in.';
@@ -13,13 +17,19 @@ try {
         exit;
     }
 
-    // Get the JSON input from the fetch request
-    $input = json_decode(file_get_contents('php://input'), true);
+    $currentTime = (new DateTime())->format('Y-m-d H:i:s');
+    $userEmail = $_SESSION['email'];
+
+    // Update last booking time
+    $updateQuery = "UPDATE users SET last_booking_time = :currtime WHERE email = :email";
+    $updateStmt = $pdo->prepare($updateQuery);
+    $updateStmt->bindParam(":currtime", $currentTime);
+    $updateStmt->bindParam(":email", $userEmail);
+    $updateStmt->execute();
 
     // Extract data from input
     $doctorID = $input['doctorId'] ?? null;
     $patientName = $input['patient_name'] ?? null;
-    $userEmail = $input['userEmail'] ?? null;
     $appointmentDate = $input['AppointmentDate'] ?? null;
     $appointmentTime = $input['AppointmentTime'] ?? null;
 
@@ -50,8 +60,8 @@ try {
     }
 
     // Insert the new appointment
-    $insertQuery = "INSERT INTO appointments (DoctorID, PatientName, email, AppointmentDate, AppointmentTime, Status, CreatedAt,UpdatedAt) 
-                    VALUES (:doctorID, :patientName, :userEmail, :appointmentDate, :appointmentTime, 'Pending', NOW(),NOW())";
+    $insertQuery = "INSERT INTO appointments (DoctorID, PatientName, email, AppointmentDate, AppointmentTime, Status, CreatedAt, UpdatedAt) 
+                    VALUES (:doctorID, :patientName, :userEmail, :appointmentDate, :appointmentTime, 'Pending', NOW(), NOW())";
 
     $insertStmt = $pdo->prepare($insertQuery);
     $insertStmt->bindParam(':doctorID', $doctorID, PDO::PARAM_INT);
@@ -72,6 +82,5 @@ try {
     $response['message'] = 'Error: ' . $e->getMessage();
 }
 
-// Return the response as JSON
 echo json_encode($response);
 ?>

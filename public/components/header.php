@@ -9,9 +9,9 @@ session_start();
             <div class="upper">
                 <div class="logo">logo</div>
                 <form class="searchBar">
-                    <input type="text" />
+        <input type="text" id="searchQuery" placeholder="Search doctors by name" />
                     <div class="searchButton pointer">
-                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <i class="fa-solid fa-magnifying-glass" onclick="searchDoctors()"></i>
                     </div>
                 </form>
                 <div class="userGetIn">
@@ -72,5 +72,18 @@ session_start();
             </div>
         </nav>
     </div>
+    <script>
+         function searchDoctors() {
+            const query = document.getElementById('searchQuery').value.trim();
+
+            // Check if the query is not empty
+            if (query) {
+                // Redirect to another page with the search query as a URL parameter
+                window.location.href = `./search_results.php?search=${encodeURIComponent(query)}`;
+            } else {
+                alert("Please enter a name to search.");
+            }
+        }
+    </script>
 </body>
 </html>

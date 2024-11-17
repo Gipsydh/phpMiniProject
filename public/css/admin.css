@@ -1,0 +1,79 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: auto;
+}
+body {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+h2 {
+  padding-top: 50px;
+}
+.options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 1140px;
+  margin-top: 50px;
+}
+.data{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 1140px;
+  margin-top: 50px;
+  flex-direction: column;
+}
+.option {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+  width: calc(100% / 2 - 20px);
+  background-color: rgb(223, 223, 223);
+  border-radius: 20px;
+  cursor: pointer;
+}
+span {
+  border: 1px solid red;
+  border-radius: 10px;
+  padding: 20px 30px;
+  margin-top: 40px;
+  display: inline-block;
+  cursor: pointer;
+}
+a {
+ text-decoration: none;
+  color: black;
+}
+
+#searchResults{
+ width: 100%;
+ display: flex;
+ flex-direction: column;
+
+}
+
+.cardBox{
+ width: 100%;
+ margin-bottom: 20px;
+ border-radius: 10px;
+ background-color: rgb(234, 234, 234);
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ padding: 20px;
+}
+.cardBox .left{
+ width: 80%;
+
+}
+.cardBox .right span{
+ padding: 10px 20px;
+ border: 1px solid red;
+ display: inline-block;
+}

@@ -183,45 +183,69 @@ foreach ($appointmentSlots as $date => $slots) {
             var fullname = "<?php echo isset($_SESSION['first_name']) ? $_SESSION['first_name'] . ' ' . $_SESSION['last_name'] : ''; ?>";
 
 
-function reserveAppointment(currDate,currSlot){
-    if (userEmail==="")
-    window.location.href = 'signin.php' // Redirect to login page
-    else {
+function reserveAppointment(currDate, currSlot) {
+    if (userEmail === "") {
+        window.location.href = 'signin.php'; // Redirect to login page
+    } else {
         const params = new URLSearchParams(window.location.search);
-
         const doctorID = params.get('doctorID');
+
         const data = {
-            doctorId:doctorID,
+            doctorId: doctorID,
             patient_name: fullname,
             userEmail: userEmail,
-            AppointmentDate:currDate,
-            AppointmentTime:currSlot
-
+            AppointmentDate: currDate,
+            AppointmentTime: currSlot,
         };
-        console.log(data)
-        fetch('../server/handleBookSlot.php', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-          body: JSON.stringify(data) // Include credentials such as cookies in the request
-        }).then(response => response.json())
-            .then(result => {
-                // Handle the response from the server
-                if (result.success) {
-                    alert("Appointment booked successfully!");
-                    location.reload();
-                } else {
-                    alert("Failed to book the appointment: " + result.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert("An error occurred while booking the appointment.");
-            });
+
+        console.log(data);
+
+        // Check cooldown period
+        fetch('../server/handleCooldown.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                // Proceed with booking the slot
+                alert("WARNING: Are you sure to book this slot? Once booked, you cannot book another slot in next 24 hours.")
+                fetch('../server/handleBookSlot.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(data),
+                })
+                .then(response => response.json())
+                .then(result => {
+                    // Handle the response from the server
+                    if (result.success) {
+                        alert("Appointment booked successfully!");
+                        location.reload();
+                    } else {
+                        alert("Failed to book the appointment: " + result.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("An error occurred while booking the appointment.");
+                });
+            } else {
+                alert("Failed to book the appointment: " + result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("An error occurred while checking the cooldown.");
+        });
     }
 }
+
 
 </script>
 
